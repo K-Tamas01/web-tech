@@ -10,6 +10,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
     fastify,
     opts
 ): Promise<void> => {
+  fastify.register(require('@fastify/cors'));
   // Place here your custom code!
 
   // Do not touch the following lines
