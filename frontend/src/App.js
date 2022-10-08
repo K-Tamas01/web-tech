@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route} from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import Navigation from './routes/Navigation/Navigation.routes';
+import Home from './routes/Home/Home.routes';
+import Films from './routes/Films/Film.route';
+import Cinemas from './routes/Cinemas/Cinema.route';
+
+const App = () =>(
+  <Routes>
+    <Route path="/" element={<Navigation />}>
+      <Route index element={<Home />} />
+      <Route path="Vetítés" element={<Films />} />
+      <Route path="Mozi" element={<Cinemas />} />
+    </Route>
+  </Routes>
+);
+
 
 export default App;

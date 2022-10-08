@@ -1,0 +1,32 @@
+.nav-container{
+    background-color: black;
+    position: fixed;
+    padding: 0px;
+    margin: 0px;
+    top: 0px;
+    width: 100%;
+    display: block;
+
+    li{
+        display: inline;
+        list-style-type: none;
+        padding: 20px;
+
+        .nav-link{
+            text-decoration: none;
+            color: white;
+            font-size: 25px;
+            font-family: 'Oswald', sans-serif;
+        }
+    }
+
+    li:hover{
+        background-color: white;
+        .nav-link{
+            text-decoration: none;
+            color: black;
+            font-size: 25px;
+            font-family: 'Oswald', sans-serif;
+        }
+    }
+}
