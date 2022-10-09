@@ -19,7 +19,7 @@ const Cinema = () =>{
 
     useEffect(() =>{
         const newFilteredCinema = Cinemas.filter((cinema) =>{
-            return cinema.name.toLowerCase().includes(searchField);
+            return cinema.City.toLowerCase().includes(searchField);
         });
 
         setFileteredCinemas(newFilteredCinema);
