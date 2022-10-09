@@ -1,0 +1,14 @@
+.Search-container{
+    display: block;
+    text-align: center;
+
+    .search-box{
+        border: none;
+        outline: none;
+        padding: 10px;
+        width: 250px;
+        line-height: 25px;
+        margin-bottom: 30px;
+    }
+
+}

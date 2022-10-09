@@ -1,0 +1,28 @@
+.table-container{
+    display: block;
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+
+    table{
+        width: 95%;
+        border: 2px solid;
+        border-collapse: collapse;
+        text-align: center;
+
+        tr{
+            color: black;
+            border: 1px solid;
+
+            th{
+                font-size: 15px;
+                border: 1px solid;
+            }
+
+            td{
+                font-size: 14px;
+                border: 1px solid;
+            }
+        }
+    }
+}
