@@ -1,9 +1,7 @@
-import './Cinema.component.styles.scss';
-
 import { useEffect, useState } from 'react';
 
 import Datatable from './Data-table/Data-table.cinema.component';
-import Search from './Search/Search.ciname.component';
+import Input from '../input-fields/Input-fields.component';
 
 
 const Cinema = () =>{
@@ -35,8 +33,14 @@ const Cinema = () =>{
     return(
     <div className='Content-container'>
         <h1>Válasszon Várost:</h1>
-        <Search onChangeHandler={onSearchChange}/>
-        <Datatable Cinema={fileteredCinemas}/>
+        <Input 
+            label="Adjon meg egy város nevet:"
+            type="search"
+            onChangeHandler={onSearchChange}
+        />
+        <Datatable 
+            Cinema={fileteredCinemas}
+        />
     </div>
 )};
 
