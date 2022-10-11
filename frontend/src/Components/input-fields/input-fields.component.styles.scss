@@ -6,11 +6,11 @@ $main-color: black;
     color: $main-color;
   }
 
-.Search-container{
+.Input-container{
     position: relative;
     margin: 45px 0;
 
-    .search-box{
+    .Input-box{
         background: none;
         background-color: white;
         color: black;
@@ -25,15 +25,16 @@ $main-color: black;
 
         &:focus {
             outline: none;
+            border-bottom: 1px solid black;
         }
       
-        &:focus ~ .search-box-label {
+        &:focus ~ .Input-box-label {
             @include shrinkLabel();
         }
     }
 
 
-    .search-box-label{
+    .Input-box-label{
         color: black;
         font-size: 16px;
         font-weight: normal;
