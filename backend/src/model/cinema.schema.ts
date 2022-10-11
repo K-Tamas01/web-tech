@@ -4,7 +4,7 @@ const cinemaSchema = new Schema({
   Cinemaname: String,
   City: String,
   Address: String,
-  OpeningHours: String,
+  OpeningHours: [String],
 },
 {
   collection: 'cinema'
