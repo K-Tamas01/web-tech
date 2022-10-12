@@ -36,7 +36,9 @@ const Cinema = () =>{
         <Input 
             label="Adjon meg egy város nevet:"
             type="search"
-            onChangeHandler={onSearchChange}
+            onChange={onSearchChange}
+            name="search"
+            value=""        //szükséges ez a mező hozzá valahogy értéket kell adni neki
         />
         <Datatable 
             Cinema={fileteredCinemas}
