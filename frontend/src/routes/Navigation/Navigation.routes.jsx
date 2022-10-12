@@ -15,7 +15,7 @@ const Navigation = () =>{
                     <li><Link className="nav-link" to="/Vetítés">Vetítés</Link></li>
                 </ul>
                 <ul>
-                  <li><Link className='nav-link-user-login' to="/Login"><span className='logo'><UserLogo className='logo' /></span></Link></li>
+                  <li><Link className='nav-link-user-login' to="/Auth"><span className='logo'><UserLogo className='logo' /></span></Link></li>
                 </ul>
         </div>
         <Outlet />
