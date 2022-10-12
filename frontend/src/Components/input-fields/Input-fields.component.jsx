@@ -1,14 +1,21 @@
 import './input-fields.component.styles.scss';
 
-const Input = ({label, type, onChangeHandler}) =>{
+const Input = ({label, ...otherProps}) =>{
     return(
     <div className='Input-container'>
        <input 
             className='Input-box'
-            type={type}
-            onChange={onChangeHandler}
+            {...otherProps}
         />
-        <label className='Input-box-label'>{label}</label>
+        {label && (
+        <label
+          className={`${
+            otherProps.value.length ? 'shrink' : ''
+          } Input-box-label`}
+        >
+          {label}
+        </label>
+      )}
     </div>
 )};
 
