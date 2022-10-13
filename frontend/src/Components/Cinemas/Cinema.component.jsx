@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import Datatable from './Data-table/Data-table.cinema.component';
+import Datatable from '../Data-table/Data-table.cinema.component';
 import Input from '../input-fields/Input-fields.component';
 
 
