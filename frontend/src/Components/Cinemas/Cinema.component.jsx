@@ -38,7 +38,7 @@ const Cinema = () =>{
             type="search"
             onChange={onSearchChange}
             name="search"
-            value=""        //szükséges ez a mező hozzá valahogy értéket kell adni neki
+            value={searchField}
         />
         <Datatable 
             Cinema={fileteredCinemas}
