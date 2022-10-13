@@ -2,7 +2,7 @@ import './Components.Home.styles.scss';
 
 const Home = () =>(
     <div className='Content-container'>
-        <h1>E heti Műsor ajánlatunk</h1>
+        <h1>Fő oldal</h1>
     </div>
 );
 
