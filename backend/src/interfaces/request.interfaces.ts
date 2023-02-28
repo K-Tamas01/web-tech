@@ -1,6 +1,6 @@
 interface IBodyLogin {
-    Email: String,
-    Password: String
+    email: String,
+    password: String
 };
 
 interface IjwttokenHeader {
@@ -8,13 +8,13 @@ interface IjwttokenHeader {
 };
 
 interface IBodySignUp {
-    Email: String,
-    Password: String,
-    Name: String,
+    email: String,
+    password: String,
+    Uname: String,
 }
 
 interface IbodyLoginString{
-    Email: String
+    email: String
 }
 
 export {

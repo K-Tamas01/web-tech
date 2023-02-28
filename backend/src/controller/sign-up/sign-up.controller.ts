@@ -5,16 +5,17 @@ const signup = require('../../model/user.scehma');
 const md5 = require("md5");
 
 const signupnCtrl = async(req: FastifyRequest<{Body: IBodySignUp}>, rep: FastifyReply) =>{
-  const {Email, Name, Password} = req.body;
+  const { email, Uname, password } = req.body;
 
-  console.log(signup.findOne({email: Email}))
-
-  if(signup.findOne({email: Email})) rep.code(400).send("Ez az Email cím már foglalt!");
+  if(await signup.findOne({email: email})) {
+    rep.code(400).send("Ez az Email cím már foglalt!");
+    return;
+  }
   
   const newSignup = new signup({
-    Email: Email,
-    Name: Name,
-    Password: md5(Password)
+    email: email,
+    Uname: Uname,
+    password: md5(password)
   });
 
   try{

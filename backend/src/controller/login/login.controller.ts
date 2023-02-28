@@ -7,12 +7,12 @@ const md5 = require('md5');
 
 
 const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyReply) =>{
-    const {Email, Password} = req.body;
+    const {email, password} = req.body;
 
-    const result = login.findOne({email: Email});
+    const result = login.findOne({email: email});
 
     if(!result) rep.code(404).send("Nincs ilyen Email cím!");
-    if(result.password !== md5(Password)) rep.code(404).send("Hibás jelszó");
+    if(result.password !== md5(password)) rep.code(404).send("Hibás jelszó");
 
     const payload = {
       Email: result.email,
@@ -30,8 +30,8 @@ const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyRep
 };
 
 const deleteAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
-  const { Email } = req.body;
-  const result = await login.deleteOne({Email:Email});
+  const { email } = req.body;
+  const result = await login.deleteOne({email: email});
 
   if(result.deletedCount === 0) rep.code(400).send("Sikertelen!");
 
@@ -40,8 +40,8 @@ const deleteAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: Fas
 };
 
 const updateAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
-  const { Email } = req.body;
-  const result = await login.updateOne({Email:Email}, req.body,{
+  const { email } = req.body;
+  const result = await login.updateOne({email: email}, req.body,{
     upsert: true
   })
 
