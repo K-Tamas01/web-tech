@@ -72,7 +72,7 @@ const SignUpForm = () =>{
                     type='Name'
                     required
                     onChange={handleChange}
-                    name="name"
+                    name="Uname"
                     value={Uname}
                 />
             
