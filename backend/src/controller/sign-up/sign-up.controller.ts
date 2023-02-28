@@ -2,9 +2,18 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { IBodySignUp } from '../../interfaces/request.interfaces';
 
 const signup = require('../../model/user.scehma');
+const md5 = require("md5");
 
 const signupnCtrl = async(req: FastifyRequest<{Body: IBodySignUp}>, rep: FastifyReply) =>{
-  const newSignup = new signup(req.body);
+  const {Email, Name, Password} = req.body;
+
+  if(signup.find({Email: Email})) rep.code(400).send("Ez az Email cím már foglalt!");
+  
+  const newSignup = new signup({
+    Email: Email,
+    Name: Name,
+    Password: md5(Password)
+  });
 
   try{
     await newSignup.save();

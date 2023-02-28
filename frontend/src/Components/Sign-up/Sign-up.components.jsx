@@ -21,30 +21,24 @@ const SignUpForm = () =>{
     }
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
 
         if (password !== confirmPassword) {
             alert("Hibás jelszó a két jelszó nem egyezzik!");
             return;
           }
 
-        try {
-        
-            resetFormField();
-
-
-            
-        } catch (error) {
-            if (error.code === 'auth/email-already-in-use') {
-                alert('Cannot create user, email already in use');
-              } else {
-                console.log('user creation encountered an error', error);
-              }
-
+        fetch("http://localhost:3000/sign-up", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            mode: "cors",
+            body: JSON.stringify(formFields)
         }
-
+        )
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+        resetFormField(); 
         
-        
+        event.preventDefault();
     };
 
     const handleChange = (event) => {
