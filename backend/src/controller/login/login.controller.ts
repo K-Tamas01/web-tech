@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { IBodyLogin, IbodyLoginString } from '../../interfaces/request.interfaces';
+import { IBodyLogin, IbodyLoginString, IjwttokenHeader } from '../../interfaces/request.interfaces';
 
 const login = require('../../model/user.scehma');
 const jwt = require('jsonwebtoken');
@@ -26,7 +26,7 @@ const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyRep
       {expiresIn: 60 * 60 * 1 } //1 óra
     )
 
-    rep.code(200).send(token);
+    rep.code(200).header('set-cookie', token);
 };
 
 const deleteAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
@@ -50,8 +50,19 @@ const updateAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: Fas
   rep.code(200).send(result);
 };
 
+const getAccData = async (req: FastifyRequest<{Headers: IjwttokenHeader}>, rep: FastifyReply) => {
+  const {token} = req.headers;
+
+  const decoded = jwt.verify(token, process.env.MY_SECRET_KEY);
+
+  const result = await login.findOne({email: decoded.Email});
+
+  rep.code(200).send({"id": result._id});
+}
+
 module.exports = {
   loginCtrl,
   deleteAcc,
-  updateAcc
+  updateAcc,
+  getAccData
 }

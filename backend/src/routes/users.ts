@@ -7,6 +7,7 @@ const auth = require('../controller/Auth/Auth.controller');
 export default async(fastify: FastifyInstance):Promise<void> =>{
   fastify.post('/login',{handler: login.loginCtrl});
   fastify.post('/sign-up',{handler: signup.signupnCtrl})
-  fastify.put('/update-data',{preHandler: auth, handler: login})
-  fastify.delete('/delete-account',{preHandler: auth, handler: login})
+  fastify.put('/update-data',{preHandler: auth, handler: login.updateAcc})
+  fastify.delete('/delete-account',{preHandler: auth, handler: login.deleteAcc})
+  fastify.post('/options',{preHandler: auth, handler: login.getAccData})
   }
