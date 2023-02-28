@@ -7,13 +7,14 @@ import Buttons from '../buttons/buttons.component';
 
 const defaultFormFields = {
     email: '',
+    Uname:'',
     password: '',
     confirmPassword: ''
 }
 
 const SignUpForm = () =>{
     const [formFields, setFormFields] = useState(defaultFormFields);
-    const {email, password, confirmPassword} = formFields;
+    const {email, Uname, password, confirmPassword} = formFields;
 
     const resetFormField = () => {
         setFormFields(defaultFormFields);
@@ -64,6 +65,15 @@ const SignUpForm = () =>{
                     onChange={handleChange}
                     name="email"
                     value={email}
+                />
+
+                 <InputForm
+                    label="Teljes név"
+                    type='Name'
+                    required
+                    onChange={handleChange}
+                    name="name"
+                    value={Uname}
                 />
             
                 <InputForm
