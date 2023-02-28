@@ -7,7 +7,9 @@ const md5 = require("md5");
 const signupnCtrl = async(req: FastifyRequest<{Body: IBodySignUp}>, rep: FastifyReply) =>{
   const {Email, Name, Password} = req.body;
 
-  if(signup.find({Email: Email})) rep.code(400).send("Ez az Email cím már foglalt!");
+  console.log(signup.findOne({email: Email}))
+
+  if(signup.findOne({email: Email})) rep.code(400).send("Ez az Email cím már foglalt!");
   
   const newSignup = new signup({
     Email: Email,
