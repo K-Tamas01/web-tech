@@ -1,9 +1,12 @@
 import './Sign-in.components.styles.scss';
 
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from '../../Context/user.context';
+import { AlertBoxContext } from "../../Context/alert.context";
 
 import InputForm from '../input-fields/Input-fields.component';
 import Buttons from '../buttons/buttons.component';
+import AlertBox from '../Alert/alert.components';
 
 const defaultFormFields = {
     email: '',
@@ -11,8 +14,10 @@ const defaultFormFields = {
 }
 
 const SignInForm = () => {
+    const {setUser} = useContext(UserContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {email, password} = formFields;
+    const {setIsOpen} = useContext(AlertBoxContext);
 
     const resetFormField = () => {
         setFormFields(defaultFormFields);
@@ -20,28 +25,18 @@ const SignInForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsOpen(true);
 
-
-        try {
-            
-            resetFormField();
-            
-
-
-            
-        } catch (error) {
-            switch (error.code) {
-              case 'auth/wrong-password':
-                alert('incorrect password for email');
-                break;
-              case 'auth/user-not-found':
-                alert('no user associated with this email');
-                break;
-              default:
-                console.log(error);
-            }
-          }
-
+        fetch('http://localhost:3000/login',{ 
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            mode: 'cors',
+            body: JSON.stringify(formFields)
+        })
+        .then((response) => {if(!response.ok){return response.text().then(text => {throw new Error(text)})} response.json()})
+        .then((data) => setUser({name: data.Username, id: data.ID, email: data.Email}))
+        .catch((error) => AlertBox())
+        .finally(resetFormField())
         
         
     };
