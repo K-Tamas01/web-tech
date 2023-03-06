@@ -12,7 +12,7 @@ const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyRep
     const result = login.findOne({email: email});
 
     if(!result) rep.code(404).send("Nincs ilyen Email cím!");
-    if(result.password !== md5(password)) rep.code(404).send("Hibás jelszó");
+    if(result.password !== md5(password)) rep.code(400).send("Hibás jelszó");
 
     const payload = {
       Email: result.email,
@@ -26,7 +26,7 @@ const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyRep
       {expiresIn: 60 * 60 * 1 } //1 óra
     )
 
-    rep.code(200).header('set-cookie', token);
+    rep.code(200).header('set-cookie', token).send({ID: result._id, Username: result.Uname, Email: result.email});
 };
 
 const deleteAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
