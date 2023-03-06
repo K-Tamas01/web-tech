@@ -32,10 +32,8 @@ const SignUpForm = () =>{
             headers: { 'Content-Type': 'application/json' },
             mode: "cors",
             body: JSON.stringify(formFields)
-        }
-        )
+        })
         .then((response) => response.json())
-        .then((data) => console.log(data));
         resetFormField(); 
         
         event.preventDefault();
