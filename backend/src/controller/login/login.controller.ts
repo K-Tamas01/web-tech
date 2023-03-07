@@ -9,10 +9,10 @@ const md5 = require('md5');
 const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyReply) =>{
     const {email, password} = req.body;
 
-    const result = login.findOne({email: email});
+    const result = await login.findOne({email: email});
 
-    if(!result) rep.code(404).send("Nincs ilyen Email cím!");
-    if(result.password !== md5(password)) rep.code(400).send("Hibás jelszó");
+    if(!result) return rep.code(404).send("Nincs ilyen Email cím!");
+    if(result.password !== md5(password)) return rep.code(400).send("Hibás jelszó");
 
     const payload = {
       Email: result.email,

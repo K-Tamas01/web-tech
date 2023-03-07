@@ -3,14 +3,12 @@ import { AlertBoxContext } from "../../Context/alert.context";
 
 import { Alert, Snackbar } from '@mui/material';
 
-const AlertBox = () => {
+const AlertBox = ({ msg, severity}) => {
     const {isOpen, setIsOpen} = useContext(AlertBoxContext);
 
     const handleClose = () => {
         setIsOpen(false)
     }
-
-    console.log(isOpen)
 
     return(
         <Snackbar 
@@ -21,7 +19,7 @@ const AlertBox = () => {
                 vertical:'top',
                 horizontal:'center'
             }}>
-            <Alert severity="error">Teszt</Alert>
+            <Alert severity={severity}>{msg}</Alert>
         </Snackbar>
 )}
 

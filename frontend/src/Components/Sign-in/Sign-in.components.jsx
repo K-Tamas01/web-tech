@@ -18,9 +18,16 @@ const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {email, password} = formFields;
     const {setIsOpen} = useContext(AlertBoxContext);
+    const [message, setMessage] = useState(null);
+    const [messageType, setMessageType] = useState(null);
 
     const resetFormField = () => {
         setFormFields(defaultFormFields);
+    }
+
+    const createMessage = (msg, type) => {
+        setMessage(msg);
+        setMessageType(type);
     }
 
     const handleSubmit = async (event) => {
@@ -34,11 +41,9 @@ const SignInForm = () => {
             body: JSON.stringify(formFields)
         })
         .then((response) => {if(!response.ok){return response.text().then(text => {throw new Error(text)})} response.json()})
-        .then((data) => setUser({name: data.Username, id: data.ID, email: data.Email}))
-        .catch((error) => AlertBox())
+        .then((data) => setUser({name: data.Username, id: data.ID, email: data.Email}), createMessage("Sikeress Bejelentkezés", "success"))
+        .catch((error) => createMessage(error.toString().split("Error:").join().replace(",",'').trimStart(), 'error'))
         .finally(resetFormField())
-        
-        
     };
 
     const handleChange = (event) => {
@@ -69,6 +74,7 @@ const SignInForm = () => {
                 />
                 <Buttons type="submit">Bejelentkezés</Buttons>
             </form>
+            <AlertBox msg={message} severity={messageType}/>
         </div>
 )}
 
