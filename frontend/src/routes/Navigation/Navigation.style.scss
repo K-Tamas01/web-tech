@@ -13,7 +13,7 @@
         display: inline;
         list-style-type: none;
         padding: 10px;
-        padding-top: 35px;
+        padding-top: 35px;  
         padding-bottom: 25px;
         margin-right: 15px;
 
@@ -28,6 +28,12 @@
             color: white;
             font-size: 30px;
             text-align: center;
+            margin-right: auto;
+            text-decoration: none;
+
+            label{
+                font-size: 15px;
+            }
         }
     }
 
