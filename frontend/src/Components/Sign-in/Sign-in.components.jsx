@@ -26,13 +26,13 @@ const SignInForm = () => {
     }
 
     const createMessage = (msg, type) => {
+        setIsOpen(true);
         setMessage(msg);
         setMessageType(type);
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setIsOpen(true);
 
         fetch('http://localhost:3000/login',{ 
             method: "POST",
@@ -40,8 +40,13 @@ const SignInForm = () => {
             mode: 'cors',
             body: JSON.stringify(formFields)
         })
-        .then((response) => {if(!response.ok){return response.text().then(text => {throw new Error(text)})} response.json()})
-        .then((data) => setUser({name: data.Username, id: data.ID, email: data.Email}), createMessage("Sikeress Bejelentkezés", "success"))
+        .then((response) => {
+            if(!response.ok) { 
+                return response.text().then(text => {throw new Error(text)})} 
+            else
+            return response.json();
+        })
+        .then(data => setUser({name: data.Username, email: data.Email, id: data.ID}), createMessage('Sikeress bejelentkezés!', 'success'))
         .catch((error) => createMessage(error.toString().split("Error:").join().replace(",",'').trimStart(), 'error'))
         .finally(resetFormField())
     };
