@@ -3,9 +3,15 @@ import './Navigation.style.scss';
 import { ReactComponent as UserLogo } from '../../assets/user.svg';
 
 import { Link, Outlet } from "react-router-dom";
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
+
+import { UserContext } from '../../Context/user.context';
 
 const Navigation = () =>{
+    const { user } = useContext(UserContext);
+
+    console.log(user)
+    
     return(
       <Fragment>
         <div className='nav-container'>
@@ -15,7 +21,9 @@ const Navigation = () =>{
                     <li><Link className="nav-link" to="/Vetítés">Vetítés</Link></li>
                 </ul>
                 <ul>
-                  <li><Link className='nav-link-user-login' to="/Auth"><span className='logo'><UserLogo className='logo' /></span></Link></li>
+                  <li>
+                  {user != null ? <Link className='nav-link-user-login' to="/Auth"><span className='logo'><UserLogo className='logo' /><label>{user.name}</label></span></Link> : <Link className='nav-link-user-login' to="/Auth"><span className='logo'><UserLogo className='logo' /></span></Link>}
+                  </li>
                 </ul>
         </div>
         <Outlet />
@@ -24,7 +32,3 @@ const Navigation = () =>{
   }
   
   export default Navigation;
-
-
-
-  //usercontext, UserDropdown
