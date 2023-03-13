@@ -33,7 +33,7 @@ const SignUpForm = () =>{
             mode: "cors",
             body: JSON.stringify(formFields)
         })
-        .then((response) => response.json())
+        .then((response) => {return response.json()})
         resetFormField(); 
         
         event.preventDefault();
