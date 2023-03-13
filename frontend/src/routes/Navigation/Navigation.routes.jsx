@@ -9,8 +9,6 @@ import { UserContext } from '../../Context/user.context';
 
 const Navigation = () =>{
     const { user } = useContext(UserContext);
-
-    console.log(user)
     
     return(
       <Fragment>
@@ -22,7 +20,7 @@ const Navigation = () =>{
                 </ul>
                 <ul>
                   <li>
-                  {user != null ? <Link className='nav-link-user-login' to="/Auth"><span className='logo'><UserLogo className='logo' /><label>{user.name}</label></span></Link> : <Link className='nav-link-user-login' to="/Auth"><span className='logo'><UserLogo className='logo' /></span></Link>}
+                  {user.id ? <Link className='nav-link-user-login' to="/Options"><span className='logo'><UserLogo className='logo' /><label>{user.name}</label></span></Link> : <Link className='nav-link-user-login' to="/Auth"><span className='logo'><UserLogo className='logo' /></span></Link>}
                   </li>
                 </ul>
         </div>
