@@ -11,6 +11,12 @@ const app: FastifyPluginAsync<AppOptions> = async (
     opts
 ): Promise<void> => {
   fastify.register(require('@fastify/cors'));
+
+  fastify.register(require('@fastify/cookie'), {
+    secret: process.env.MY_SECRECT_TOKEN,
+    hook: 'onRequest',
+    parseOptions: {}
+  })
   // Place here your custom code!
 
   // Do not touch the following lines
