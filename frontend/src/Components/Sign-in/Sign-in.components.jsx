@@ -2,24 +2,25 @@ import './Sign-in.components.styles.scss';
 
 import { useState, useContext } from "react";
 import { UserContext } from '../../Context/user.context';
-import { AlertBoxContext } from "../../Context/alert.context";
+import { useNavigate } from 'react-router-dom';
 
 import InputForm from '../input-fields/Input-fields.component';
 import Buttons from '../buttons/buttons.component';
-import AlertBox from '../Alert/alert.components';
+
+import { AlertBoxContext } from '../../Context/alert.context';
 
 const defaultFormFields = {
     email: '',
     password: '',
 }
 
-const SignInForm = () => {
+const SignInForm = ({messageText, messageType}) => {
+    const {setIsOpen} = useContext(AlertBoxContext);
     const {setUser} = useContext(UserContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {email, password} = formFields;
-    const {setIsOpen} = useContext(AlertBoxContext);
-    const [message, setMessage] = useState(null);
-    const [messageType, setMessageType] = useState(null);
+
+    const navigate = useNavigate();
 
     const resetFormField = () => {
         setFormFields(defaultFormFields);
@@ -27,8 +28,8 @@ const SignInForm = () => {
 
     const createMessage = (msg, type) => {
         setIsOpen(true);
-        setMessage(msg);
-        setMessageType(type);
+        messageText(msg);
+        messageType(type);
     }
 
     const handleSubmit = async (event) => {
@@ -46,7 +47,7 @@ const SignInForm = () => {
             else
             return response.json();
         })
-        .then(data => setUser({name: data.Username, email: data.Email, id: data.ID}), createMessage('Sikeress bejelentkezés!', 'success'))
+        .then(data => setUser({name: data.Username, email: data.Email, id: data.ID}), createMessage('Sikeress bejelentkezés!', 'success'), navigate('/', {replace: true}))
         .catch((error) => createMessage(error.toString().split("Error:").join().replace(",",'').trimStart(), 'error'))
         .finally(resetFormField())
     };
@@ -77,9 +78,9 @@ const SignInForm = () => {
                     name='password'
                     value={password}
                 />
-                <Buttons type="submit">Bejelentkezés</Buttons>
+                <Buttons type="submit" classname={'button-container'}>Bejelentkezés</Buttons>
             </form>
-            <AlertBox msg={message} severity={messageType}/>
+            
         </div>
 )}
 

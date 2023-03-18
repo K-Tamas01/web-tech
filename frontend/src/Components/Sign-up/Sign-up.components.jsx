@@ -1,6 +1,7 @@
 import './Sign-up.components.styles.scss';
 
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AlertBoxContext } from "../../Context/alert.context";
 
 import InputForm from '../input-fields/Input-fields.component';
 import Buttons from '../buttons/buttons.component';
@@ -12,9 +13,15 @@ const defaultFormFields = {
     confirmPassword: ''
 }
 
-const SignUpForm = () =>{
+const SignUpForm = ({messageText, messageType}) =>{
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {email, Uname, password, confirmPassword} = formFields;
+    const {setIsOpen} = useContext(AlertBoxContext);
+
+    const createMessage = (msg) => {
+        setIsOpen(true);
+        messageText(msg)
+    }
 
     const resetFormField = () => {
         setFormFields(defaultFormFields);
@@ -23,7 +30,8 @@ const SignUpForm = () =>{
     const handleSubmit = async (event) => {
 
         if (password !== confirmPassword) {
-            alert("Hibás jelszó a két jelszó nem egyezzik!");
+            messageType('error');
+            createMessage("A jelszavak nem egyeznek!");
             return;
           }
 
@@ -33,7 +41,14 @@ const SignUpForm = () =>{
             mode: "cors",
             body: JSON.stringify(formFields)
         })
-        .then((response) => {return response.json()})
+        .then((response) => {if(response.ok)
+                messageType('success')
+            else
+                messageType('error')
+            return response.json()
+            })
+        .then((data) => createMessage(data.msg))
+
         resetFormField(); 
         
         event.preventDefault();
@@ -85,7 +100,7 @@ const SignUpForm = () =>{
                     name="confirmPassword"
                     value={confirmPassword}
                 />
-                <Buttons type='submit'>Regisztráció</Buttons>
+                <Buttons type='submit' classname={'button-container'}>Regisztráció</Buttons>
             </form>
         </div>
 )}

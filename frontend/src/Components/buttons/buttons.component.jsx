@@ -1,9 +1,9 @@
 import './buttons.component.styles.scss';
 
 
-const Buttons = ({children}) => {
+const Buttons = ({children, classname}) => {
     return(
-    <button className='button-container'>
+    <button className={classname}>
         {children}
     </button>
 )};
