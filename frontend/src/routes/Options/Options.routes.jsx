@@ -1,9 +1,9 @@
 import OptionsPage from '../../Components/Options/options.components';
 
-const Options = () =>{
+const Options = ({messageText, messageType}) =>{
     return(
         <div>
-            <OptionsPage />
+            <OptionsPage messageText={messageText} messageType={messageType} />
         </div>
     )
 }

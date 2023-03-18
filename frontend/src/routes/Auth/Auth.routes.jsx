@@ -3,11 +3,11 @@ import './Auth.routes.styles.scss';
 import SignInPage from '../../Components/Sign-in/Sign-in.components';
 import SignUpPage from '../../Components/Sign-up/Sign-up.components';
 
-const Auth = () =>{
+const Auth = ({messageText, messageType}) =>{
   return(
     <div className='authentication-container'>
-      <SignInPage />
-      <SignUpPage />
+      <SignInPage messageText={messageText} messageType={messageType} />
+      <SignUpPage messageText={messageText} messageType={messageType} />
     </div>
   )
 }
