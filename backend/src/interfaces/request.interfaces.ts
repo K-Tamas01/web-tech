@@ -14,7 +14,10 @@ interface IBodySignUp {
 }
 
 interface IbodyLoginString{
-    email: String
+    oldEmail: String,
+    newEmail?: String,
+    oldPassword?: String,
+    newPassword?: String,
 }
 
 export {

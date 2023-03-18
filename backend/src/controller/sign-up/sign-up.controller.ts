@@ -8,7 +8,7 @@ const signupnCtrl = async(req: FastifyRequest<{Body: IBodySignUp}>, rep: Fastify
   const { email, Uname, password } = req.body;
 
   if(await signup.findOne({email: email})) {
-    rep.code(400).send("Ez az Email cím már foglalt!");
+    rep.code(400).send({msg: "Ez az Email cím már foglalt!"});
     return;
   }
   
@@ -21,11 +21,10 @@ const signupnCtrl = async(req: FastifyRequest<{Body: IBodySignUp}>, rep: Fastify
   try{
     await newSignup.save();
   }catch(e){
-    rep.code(400).send(e);
+    rep.code(400).send({msg: e});
   }
 
-  rep.code(201).send("Sikeres regisztráció!");
-
+  rep.code(201).send({msg: "Sikeres regisztráció!"});
 
 };
 

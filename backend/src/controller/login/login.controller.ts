@@ -11,8 +11,8 @@ const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyRep
 
     const result = await login.findOne({email: email});
 
-    if(!result) return rep.code(404).send("Nincs ilyen Email cím!");
-    if(result.password !== md5(password)) return rep.code(400).send("Hibás jelszó");
+    if(!result) return rep.code(404).send({msg: 'Nincs ilyen Email cím!'});
+    if(result.password !== md5(password)) return rep.code(400).send({msg: 'Hibás jelszó'});
 
     const payload = {
       Email: result.email,
@@ -30,24 +30,35 @@ const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyRep
 };
 
 const deleteAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
-  const { email } = req.body;
-  const result = await login.deleteOne({email: email});
+  const { oldEmail } = req.body;
+  const result = await login.deleteOne({email: oldEmail});
 
-  if(result.deletedCount === 0) rep.code(400).send("Sikertelen!");
+  if(result.deletedCount === 0) rep.code(400).send({msg: 'Hiba történt...'});
 
   rep.code(200).send(result);
   
 };
 
 const updateAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
-  const { email } = req.body;
-  const result = await login.updateOne({email: email}, req.body,{
-    upsert: true
-  })
+  const { newEmail, oldEmail, oldPassword, newPassword } = req.body;
 
-  if(!result) rep.code(400).send("Sikertelen!");
+  const result = await login.findOne({email: oldEmail});
 
-  rep.code(200).send(result);
+  if(!result) rep.code(400).send({msg: 'Hiba történt...'});
+
+  if(newEmail !== '') {
+    const update = await login.updateOne({email: oldEmail}, {email: newEmail}, {upsert: false})
+    if(!update) rep.code(400).send({msg: 'Hiba történt...'})
+  }
+
+  if(md5(oldPassword) == result.password) rep.code(400).send({msg: 'Hibás jelszó!'})
+
+  if(newPassword !== '') {
+    const update = await login.updateOne({email: oldEmail}, {password: md5(newPassword)}, {upsert: false})
+    if(!update) rep.code(400).send({msg: 'Hiba történt...'})
+  }
+
+  newEmail ? rep.code(200).send({msg: 'Sikeres változtatás', email: newEmail}) : rep.code(200).send({msg: 'Sikeres változtatás'});
 };
 
 const getAccData = async (req: FastifyRequest<{Headers: IjwttokenHeader}>, rep: FastifyReply) => {
