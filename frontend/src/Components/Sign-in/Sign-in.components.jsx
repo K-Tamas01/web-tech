@@ -37,17 +37,25 @@ const SignInForm = ({messageText, messageType}) => {
 
         fetch('http://localhost:3000/login',{ 
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json'
+            },
             mode: 'cors',
+            credentials: 'include',
             body: JSON.stringify(formFields)
         })
         .then((response) => {
             if(!response.ok) { 
                 return response.text().then(text => {throw new Error(text)})} 
-            else
-            return response.json();
+            else {
+                return response.json();
+            }
         })
-        .then(data => setUser({name: data.Username, email: data.Email, id: data.ID}), createMessage('Sikeress bejelentkezés!', 'success'), navigate('/', {replace: true}))
+        .then(data => {
+            setUser({name: data.Username, email: data.Email, id: data.ID})
+            createMessage('Sikeress bejelentkezés!', 'success')
+            navigate('/', {replace: true})
+        })
         .catch((error) => createMessage(error.toString().split("Error:").join().replace(",",'').trimStart(), 'error'))
         .finally(resetFormField())
     };
