@@ -41,7 +41,8 @@ const OptionsPage = ({messageText, messageType}) => {
 
     const setResponseData = (data) => {
         if(data.email) {
-            setUser({email: data.email})
+            setUser({email: data.email, id: user.id, name: user.name})
+            createMessage(data.msg)
         }
         else if(data.msg) {
             createMessage(data.msg)
@@ -67,6 +68,7 @@ const OptionsPage = ({messageText, messageType}) => {
             method: "PUT",
             headers: { 'Content-Type': 'application/json' },
             mode: 'cors',
+            credentials: 'include',
             body: JSON.stringify(data)
         })
         .then((response) => {
