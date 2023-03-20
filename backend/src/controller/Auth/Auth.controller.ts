@@ -1,26 +1,27 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { IjwttokenHeader } from '../../interfaces/request.interfaces';
 
 const jwt = require("jsonwebtoken");
 const member = require("../../model/user.scehma");
 
-const authenticationwithjwttoken = async(req: FastifyRequest<{Headers: IjwttokenHeader}>, rep: FastifyReply) =>{
+const authenticationwithjwttoken = async(req: FastifyRequest, rep: FastifyReply) =>{
   
-  const {token} = req.headers;
-  let decoded;
+  const cookie = req.headers['cookie'];
+
+  const token = cookie?.split('=')[1];
 
   try{
     if(!token){
-      rep.code(400).send("Hiányzik a token!");
+      return rep.code(400).send({msg: "Hiányzik a token!"});
     }
-    decoded = jwt.verify(token, process.env.MY_SECRET_KEY);
+
+    const decoded = jwt.verify(token, process.env.MY_SECRECT_TOKEN);
 
     const result = await member.findOne({email: decoded.Email});
 
-    if(!result) rep.code(400).send("Sikertelen azonosítás");
+    if(!result) return rep.code(400).send({msg: "Sikertelen azonosítás"});
 
   }catch(error){
-    rep.code(401).send(error);
+    return rep.code(401).send({msg: error});
   }
 }
 
