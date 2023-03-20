@@ -60,7 +60,7 @@ const updateAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: Fas
   }
 
   if(oldPassword !== '') {
-    if(md5(oldPassword) == result.password) return rep.code(400).send({msg: 'Hibás jelszó!'})
+    if(md5(oldPassword) !== result.password) return rep.code(400).send({msg: 'Hibás jelszó!'})
 
     if(newPassword !== '') {
       const update = await login.updateOne({email: oldEmail}, {password: md5(newPassword)}, {upsert: false})
