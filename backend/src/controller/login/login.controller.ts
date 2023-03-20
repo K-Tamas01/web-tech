@@ -81,7 +81,7 @@ const updateAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: Fas
   )
 
   rep.setCookie('user-access', token,{
-    path:'http://localhost:5000/',
+    path:'/',
     sameSite: 'strict',
     maxAge: 3600, 
     httpOnly: true,
