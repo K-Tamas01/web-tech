@@ -37,13 +37,19 @@ const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyRep
     rep.code(200).header('Access-Control-Expose-Headers', 'set-cookie').send({ID: result._id, Username: result.Uname, Email: result.email});
 };
 
-const deleteAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
-  const { oldEmail } = req.body;
-  const result = await login.deleteOne({email: oldEmail});
+const deleteAcc = async (req: FastifyRequest, rep: FastifyReply) => {
+
+  const cookie = req.headers['cookie'];
+
+  const token = cookie?.split('=')[1];
+
+  const decoded = jwt.verify(token, process.env.MY_SECRECT_TOKEN);
+
+  const result = await login.deleteOne({email: decoded.Email});
 
   if(result.deletedCount === 0) rep.code(400).send({msg: 'Hiba történt...'});
 
-  rep.code(200).send({msg: 'Sikeres'});
+  rep.code(200).send({msg: 'Sikeres fiók törlés!'});
   
 };
 

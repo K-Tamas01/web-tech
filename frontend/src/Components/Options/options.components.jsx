@@ -82,6 +82,21 @@ const OptionsPage = ({messageText, messageType}) => {
     };
 
     const deleteAccountHandleSubmit = async (event) => {
+
+        fetch('http://localhost:3000/delete-account', {
+            method: 'delete',
+            headers: { 'Content-Type': 'application/json' },
+            mode: 'cors',
+            credentials: 'include',
+        })
+        .then((response) => {
+            if(response.ok) messageType('success')
+            else messageType('error')
+            return response.json()
+        })
+        .then((data) => setResponseData(data))
+
+        setUser({email: undefined, id: undefined, name: undefined});
         event.preventDefault();
         navigate('/', {replace: true});
     }
