@@ -14,8 +14,41 @@ interface IbodyLoginString{
     newPassword?: String,
 }
 
+interface IbodyFilmString{
+    title: String,
+    length: String,
+    description?: String,
+    age_restriced: Boolean,
+    age_limit?: Number,
+    date: Date,
+    time: Date,
+    room: Number,
+    seats: Number,
+    address: String,
+    address2?: String,
+    price: Number
+}
+
+interface IbodyFilmId{
+    id: String,
+    title?: String,
+    length?: String,
+    description?: String,
+    age_restriced?: Boolean,
+    age_limit?: Number,
+    date?: Date,
+    time?: Date,
+    room?: Number,
+    seats?: Number,
+    address?: String,
+    address2?: String,
+    price?: Number
+}
+
 export {
     IBodyLogin,
     IBodySignUp,
-    IbodyLoginString
+    IbodyLoginString,
+    IbodyFilmString,
+    IbodyFilmId
 }
