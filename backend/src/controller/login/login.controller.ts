@@ -47,7 +47,7 @@ const deleteAcc = async (req: FastifyRequest, rep: FastifyReply) => {
 
   const result = await login.deleteOne({email: decoded.Email});
 
-  if(result.deletedCount === 0) rep.code(400).send({msg: 'Hiba történt...'});
+  if(result.deletedCount === 0) return rep.code(400).send({msg: 'Hiba történt...'});
 
   rep.code(200).send({msg: 'Sikeres fiók törlés!'});
   
