@@ -21,6 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import MovieIcon from '@mui/icons-material/Movie';
 import LocalMoviesIcon from '@mui/icons-material/LocalMovies';
 import HomeIcon from '@mui/icons-material/Home';
+import PublishIcon from '@mui/icons-material/Publish';
 
 
 import { UserContext } from '../../Context/user.context';
@@ -75,7 +76,7 @@ const Navigation = () =>{
                   <AccountCircle />
                 </IconButton>
                 <Menu anchorEl={anchorMenu} open={Boolean(anchorMenu)} onClose={closeMenu}>
-                  {user.id ? (<div><MenuItem onClick={closeMenu} component={Link} to="/Options"><BuildIcon fontSize='small'/>&nbsp;Fiók</MenuItem><MenuItem onClick={menulogout} component={Link} to="/"><LogoutIcon fontSize='small'/>&nbsp;Kiejelentkezés</MenuItem></div>) : 
+                  {user.id ? (<div><MenuItem onClick={closeMenu} component={Link} to="/Options"><BuildIcon fontSize='small'/>&nbsp;Fiók</MenuItem><MenuItem onClick={menulogout} component={Link} to="/Films-form"><PublishIcon fontSize='small'/>&nbsp;Film felvétel</MenuItem><MenuItem onClick={menulogout} component={Link} to="/"><LogoutIcon fontSize='small'/>&nbsp;Kiejelentkezés</MenuItem></div>) : 
                   (<MenuItem onClick={closeMenu} component={Link} to="/Auth"><LoginIcon fontSize='small'/>&nbsp;Bejelentkezés</MenuItem>)}
                 </Menu>
             </Toolbar>
@@ -101,7 +102,13 @@ const Navigation = () =>{
                 <ListItemText primary="Mozik" />
               </ListItem>
               {user.id ? ( <div>
-                <ListItem button component={Link} to="/Options" onClick={toggleDrawer(false)}>
+                <ListItem button component={Link} to="/Films-form" onClick={toggleDrawer(false)}>
+                <ListItemIcon>
+                  <PublishIcon fontSize='small'/>
+                </ListItemIcon>
+                <ListItemText primary="Film felvétel" />
+              </ListItem>
+              <ListItem button component={Link} to="/Options" onClick={toggleDrawer(false)}>
                 <ListItemIcon>
                   <BuildIcon fontSize='small'/>
                 </ListItemIcon>
