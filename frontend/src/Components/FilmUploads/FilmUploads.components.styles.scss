@@ -1,0 +1,26 @@
+.table.container {
+    margin-left: 300px;
+
+    table {
+        border: none;
+        border-collapse: collapse;
+
+        tbody {
+            border: none;
+            border-collapse: collapse;
+
+            tr, td {
+                border: none;
+                border-collapse: collapse;
+            }
+        }
+    }
+
+    .buttons{
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+        top: 0;
+        margin-top: 50px;
+    }
+}
