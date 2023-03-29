@@ -2,6 +2,7 @@ import './FilmUploads.components.styles.scss';
 
 import InputForm from '../input-fields/Input-fields.component';
 import Buttons from '../buttons/buttons.component';
+import SelectList from '../Select/Select.components';
 
 import { AlertBoxContext } from '../../Context/alert.context';
 
@@ -24,6 +25,7 @@ const defaultFormFields = {
 
 const FilmUploads = ({messageText, messageType}) => {
     const {setIsOpen} = useContext(AlertBoxContext);
+    const [films, setFilms] = useState(null);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { 
         title,
@@ -65,10 +67,117 @@ const FilmUploads = ({messageText, messageType}) => {
 
     return (
         <div className='table-container'>
-            <h2>Bejelentkezés</h2>
+            <h2>Film feltöltés/szerkesztés</h2>
+            <div className='film-select'>
+                <SelectList 
+                    label={'Válasz filmet'}
+                    options={[
+                        { label: 'films.title', value: 'setFormFields(films)' },
+                    ]}
+                    value={age_restriced}
+                    onChange={setFormFields}
+                />
+            </div>
             <form onSubmit={handleCreateSubmit}>
                 <table>
                     <tbody>
+                        <tr>
+                            <td>
+                                <InputForm
+                                    label='cím'
+                                    type='text'
+                                    required
+                                    onChange={handleChange}
+                                    name='title'
+                                    value={title}
+                                />
+                            </td>
+                            <td>
+                                <InputForm
+                                    label='Hossz (Percben)'
+                                    type='number'
+                                    required
+                                    onChange={handleChange}
+                                    name='length'
+                                    value={length}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <InputForm
+                                    label='leírás'
+                                    type='text'
+                                    required
+                                    onChange={handleChange}
+                                    name='description'
+                                    value={description}
+                                />
+                            </td>
+                            <td>
+                                <div className='data-select'>
+                                    <SelectList 
+                                            label={'Korhatáros'}
+                                            options={[
+                                                { label: 'Igen', value: true },
+                                                { label: 'Nem', value: false },
+                                            ]}
+                                            value={age_restriced}
+                                            onChange={setFormFields}
+                                    />
+                               </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div className='data-select'>
+                                    <SelectList 
+                                            label={'Korhatár'}
+                                            options={[
+                                                { label: 'Nincs', value: 0 },
+                                                { label: '+6', value: 6 },
+                                                { label: '+12', value: 12 },
+                                                { label: '+16', value: 16 },
+                                                { label: '+18', value: 18 },
+                                            ]}
+                                            value={age_restriced}
+                                            onChange={setFormFields}
+                                    />
+                                </div>
+                            </td>
+                            <td>
+                                <InputForm
+                                    label='Hossz (Percben)'
+                                    type='number'
+                                    required
+                                    onChange={handleChange}
+                                    name='length'
+                                    value={length}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <InputForm
+                                    label='cím'
+                                    type='text'
+                                    required
+                                    onChange={handleChange}
+                                    name='title'
+                                    value={title}
+                                />
+                            </td>
+                            <td>
+                                <InputForm
+                                    label='Hossz (Percben)'
+                                    type='number'
+                                    required
+                                    onChange={handleChange}
+                                    name='length'
+                                    value={length}
+                                />
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 <InputForm
@@ -115,18 +224,21 @@ const FilmUploads = ({messageText, messageType}) => {
                         </tr>
                     </tbody>
                 </table>
-                <Buttons type="submit" classname={'button-container'}>Kitűzés</Buttons>
-            </form>
-            <form onSubmit={handleUpdateSubmit}>
-                <div className='buttons'>
-                    <Buttons type="submit" classname={'button-container'}>Módosítás</Buttons>
-                </div>
-            </form>
-            <form onSubmit={handleDeleteSubmit}>
-                <div className='buttons'>
+                {!films ? (
+                    <Buttons type="submit" classname={'button-container'}>Kitűzés</Buttons>
+                ):(
+                <div className='inline-forms'>
+                    <div className='button'>
+                        <Buttons type="submit" classname={'button-container'}>Módosítás</Buttons>
+                    </div>
+                    <div className='button'>
                     <Buttons type="submit" classname={'button-container-delete'}>Törlés</Buttons>
+                    </div>
                 </div>
+                )}
             </form>
+            
+            
         </div>
     )
 

@@ -1,26 +1,46 @@
-.table.container {
-    margin-left: 300px;
+.table-container {
+    margin-left: 50px;
+    text-align: left;
+
+    .film-select{
+        margin-left: auto;
+        margin-right: auto;
+        width: 310px;
+    }
 
     table {
         border: none;
         border-collapse: collapse;
+        width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 100px;
 
-        tbody {
-            border: none;
-            border-collapse: collapse;
-
-            tr, td {
+        tbody{
+            
+            tr{
                 border: none;
-                border-collapse: collapse;
+
+                td{
+                    border: none;
+                    text-align: left;
+                    width: 150px;
+
+                    .data-select{
+                        width: 310px;
+                    }
+                }
             }
         }
+        
     }
-
-    .buttons{
+    .inline-forms{
         display: flex;
-        flex-direction: column;
-        width: 200px;
-        top: 0;
-        margin-top: 50px;
+        flex-flow: row wrap;
+        align-items: center;
+
+        .button{
+            margin-right: 35px;
+        }
     }
 }
