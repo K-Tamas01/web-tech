@@ -20,7 +20,7 @@ const createFilm = async(req: FastifyRequest<{Body: IbodyFilmString}>, rep: Fast
         length, 
         description, 
         age_restriced, 
-        age_limit, 
+        age_limit,
         date, 
         time, 
         room, 
@@ -58,9 +58,11 @@ const createFilm = async(req: FastifyRequest<{Body: IbodyFilmString}>, rep: Fast
 
 const updateFilm = async(req: FastifyRequest<{Body: IbodyFilmId}>, rep: FastifyReply) => {
 
-    const { id } = req.body;
+    const { _id } = req.body;
+
+    console.log(_id)
     
-    const result = await film.updateOne({_id: id}, req.body, {upsert: false});
+    const result = await film.updateOne({_id: _id}, req.body, {upsert: false});
 
     if(!result) return rep.code(400).send({msg: 'Hiba történt...'});
 
@@ -69,9 +71,9 @@ const updateFilm = async(req: FastifyRequest<{Body: IbodyFilmId}>, rep: FastifyR
 
 const deleteFilm = async(req: FastifyRequest<{Body: IbodyFilmId}>, rep: FastifyReply) => {
 
-    const { id } = req.body;
+    const { _id } = req.body;
     
-    const result = await film.deleteOne({_id: id});
+    const result = await film.deleteOne({_id: _id});
 
     if(result.deletedCount === 0) return rep.code(400).send({msg: 'Hiba történt...'});
 

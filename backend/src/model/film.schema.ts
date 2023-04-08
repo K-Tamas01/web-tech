@@ -2,7 +2,7 @@ var { Schema, model } = require('mongoose');
 
 const filmSchema = new Schema({
   title: String,
-  length: String,
+  length: Number,
   description: String,
   age_restriced: Boolean,
   age_limit: Number,

@@ -16,7 +16,7 @@ interface IbodyLoginString{
 
 interface IbodyFilmString{
     title: String,
-    length: String,
+    length: Number,
     description?: String,
     age_restriced: Boolean,
     age_limit?: Number,
@@ -30,9 +30,9 @@ interface IbodyFilmString{
 }
 
 interface IbodyFilmId{
-    id: String,
+    _id: String,
     title?: String,
-    length?: String,
+    length?: Number,
     description?: String,
     age_restriced?: Boolean,
     age_limit?: Number,
