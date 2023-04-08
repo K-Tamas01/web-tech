@@ -6,9 +6,15 @@ import SelectList from '../Select/Select.components';
 
 import { AlertBoxContext } from '../../Context/alert.context';
 
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+import dayjs from 'dayjs';
 
 const defaultFormFields = {
+    _id: '',
     title: '',
     length: '',
     description: '',
@@ -27,6 +33,9 @@ const FilmUploads = ({messageText, messageType}) => {
     const {setIsOpen} = useContext(AlertBoxContext);
     const [films, setFilms] = useState(null);
     const [formFields, setFormFields] = useState(defaultFormFields);
+    const [isSelected, setIsSelected] = useState(false);
+    const [reload, setReload] = useState(true);
+    const [options, setOptions] = useState([]);
     const { 
         title,
         length,
@@ -40,7 +49,7 @@ const FilmUploads = ({messageText, messageType}) => {
         address,
         address2,
         price
-    } = defaultFormFields;
+    } = formFields;
 
     const resetFormField = () => {
         setFormFields(defaultFormFields);
@@ -52,11 +61,75 @@ const FilmUploads = ({messageText, messageType}) => {
         messageType(type);
     }
 
-    const handleCreateSubmit = async (event) => {
-    }
-    const handleUpdateSubmit = async (event) => {
-    }
-    const handleDeleteSubmit = async (event) => {
+    useEffect(() => {
+
+        if(reload){
+            fetch('http://localhost:3000/films', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors',
+                credentials: 'include'
+            })
+            .then((response) => response.json())
+            .then((data) => {setFilms(data); setOptions(data.map(film => ({label: film.title, value: film})));});
+            setReload(false)
+        }
+    }, [reload])
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const modify = event.nativeEvent.submitter.name;
+
+        switch(modify){
+            case 'update':{
+                fetch('http://localhost:3000/update-film', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors',
+                    credentials: 'include',
+                    body: JSON.stringify(formFields)
+                })
+                .then((response) => {if(response.ok){return createMessage('Sikeres frissités', 'success')} else {return response.text().then(text => {throw new Error(text)})}})
+                .catch((error) => {createMessage(error.toString().split("Error:").join().replace(",",'').trimStart(), 'error')})
+                break;
+            }
+            case 'delete':{
+                fetch('http://localhost:3000/remove-film', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors',
+                    credentials: 'include',
+                    body: JSON.stringify(formFields)
+                })
+                .then((response) => {if(response.ok){return createMessage('Sikeres törlés', 'success')} else {return response.text().then(text => {throw new Error(text)})}})
+                .catch((error) => {createMessage(error.toString().split("Error:").join().replace(",",'').trimStart(), 'error')})
+                setReload(true)
+                break;
+            }
+            default:{
+                fetch('http://localhost:3000/add-films',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors',
+                    credentials: 'include',
+                    body: JSON.stringify(formFields)
+                })
+                .then((response) => {if(response.ok){return createMessage('Sikeres adathozzáadás', 'success')} else {response.json()}})
+                .catch((error) => {createMessage(error.toString().split("Error:").join().replace(",",'').trimStart(), 'error')})
+                setReload(true)
+                break;
+            }
+        }
+        resetFormField();
     }
 
     const handleChange = (event) => {
@@ -69,22 +142,26 @@ const FilmUploads = ({messageText, messageType}) => {
         <div className='table-container'>
             <h2>Film feltöltés/szerkesztés</h2>
             <div className='film-select'>
-                <SelectList 
+                {!films ?
+                 <SelectList 
                     label={'Válasz filmet'}
-                    options={[
-                        { label: 'films.title', value: 'setFormFields(films)' },
-                    ]}
-                    value={age_restriced}
-                    onChange={setFormFields}
-                />
+                    options={[{label: '', value:''}]}
+                    value={''}
+                /> : <SelectList 
+                        label={'Válasz filmet'}
+                        options={options}
+                        value={title}
+                        onChange={(val) => {setFormFields(val); setIsSelected(true)}}
+                    />
+                }
             </div>
-            <form onSubmit={handleCreateSubmit}>
+            <form onSubmit={handleSubmit}>
                 <table>
                     <tbody>
                         <tr>
                             <td>
                                 <InputForm
-                                    label='cím'
+                                    label='Cím'
                                     type='text'
                                     required
                                     onChange={handleChange}
@@ -123,7 +200,7 @@ const FilmUploads = ({messageText, messageType}) => {
                                                 { label: 'Nem', value: false },
                                             ]}
                                             value={age_restriced}
-                                            onChange={setFormFields}
+                                            onChange={(val) => {setFormFields({...formFields, age_restriced: val})}}
                                     />
                                </div>
                             </td>
@@ -140,99 +217,101 @@ const FilmUploads = ({messageText, messageType}) => {
                                                 { label: '+16', value: 16 },
                                                 { label: '+18', value: 18 },
                                             ]}
-                                            value={age_restriced}
-                                            onChange={setFormFields}
+                                            value={age_limit}
+                                            onChange={(val) => {setFormFields({...formFields, age_limit: val})}}
                                     />
                                 </div>
                             </td>
                             <td>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DatePicker 
+                                        label='Válasz dátumot'
+                                        value={date ? dayjs(date) : dayjs('1980.01.01')}
+                                        onChange={(val) => {setFormFields({...formFields, date: val}); console.log(formFields)}}
+                                        name='date'
+                                        required
+                                    />
+                                </LocalizationProvider>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <MobileTimePicker 
+                                    label='Válasz időt'
+                                    value={time ? dayjs(time) : dayjs('1980.01.01')}
+                                    onChange={(val) => {setFormFields({...formFields, time: val})}}
+                                    name='time'
+                                    required
+                                />
+                                </LocalizationProvider>
+                            </td>
+                            <td>
                                 <InputForm
-                                    label='Hossz (Percben)'
+                                    label='Terem'
                                     type='number'
                                     required
                                     onChange={handleChange}
-                                    name='length'
-                                    value={length}
+                                    name='room'
+                                    value={room}
                                 />
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <InputForm
-                                    label='cím'
-                                    type='text'
+                                    label='Helyek száma'
+                                    type='number'
                                     required
                                     onChange={handleChange}
-                                    name='title'
-                                    value={title}
+                                    name='seats'
+                                    value={seats}
                                 />
                             </td>
                             <td>
                                 <InputForm
-                                    label='Hossz (Percben)'
-                                    type='number'
+                                    label='Város'
+                                    type='text'
                                     required
                                     onChange={handleChange}
-                                    name='length'
-                                    value={length}
+                                    name='address'
+                                    value={address}
                                 />
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <InputForm
-                                    label='cím'
+                                    label='utca'
                                     type='text'
                                     required
                                     onChange={handleChange}
-                                    name='title'
-                                    value={title}
+                                    name='address2'
+                                    value={address2}
                                 />
                             </td>
                             <td>
                                 <InputForm
-                                    label='Hossz (Percben)'
+                                    label='ár'
                                     type='number'
                                     required
                                     onChange={handleChange}
-                                    name='length'
-                                    value={length}
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <InputForm
-                                    label='cím'
-                                    type='text'
-                                    required
-                                    onChange={handleChange}
-                                    name='title'
-                                    value={title}
-                                />
-                            </td>
-                            <td>
-                                <InputForm
-                                    label='Hossz (Percben)'
-                                    type='number'
-                                    required
-                                    onChange={handleChange}
-                                    name='length'
-                                    value={length}
+                                    name='price'
+                                    value={price}
                                 />
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                {!films ? (
-                    <Buttons type="submit" classname={'button-container'}>Kitűzés</Buttons>
+                {!isSelected ? (
+                    <Buttons type="submit" classname={'button-container'} name='create' >Kitűzés</Buttons>
                 ):(
                 <div className='inline-forms'>
                     <div className='button'>
-                        <Buttons type="submit" classname={'button-container'}>Módosítás</Buttons>
+                        <Buttons type="submit" classname={'button-container'} name='update' >Módosítás</Buttons>
                     </div>
                     <div className='button'>
-                    <Buttons type="submit" classname={'button-container-delete'}>Törlés</Buttons>
+                    <Buttons type="submit" classname={'button-container-delete'} name='delete' >Törlés</Buttons>
                     </div>
                 </div>
                 )}
