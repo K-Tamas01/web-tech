@@ -1,6 +1,6 @@
 ### 1. lépés
 Mindkét mappában a backend és a frontend mappán belül adjuk a ki az alábbi parancsot:
-    npm install
+        npm install
 
 ### 2. lépés
 Mindkét mappán belül indítunk egy terminált és kiadjuk az alábbi paranocst:
