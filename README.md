@@ -123,7 +123,7 @@ Ezek a kódok voltak amelyek érdekesek voltak számunkra mert a többi oldalt f
 ### Backend Kód leírás
 A backend szerverünk egy **Typescript Fastify** szerver, és az adatbázisunk egy Mongodb adatbázis ami a felhőbe és bárhonnan elérhető. A frontend oldalról különböző API hívásokkal érjük el a backend szerver külnböző kontroller függvényeit ami valamilyen műveltet végez ez a kérés alapján beérekezett paramétereken keresztül. 4 féle metódust fogad a **GET, POST, UPDATE, DELETE**  ezt a 4 tudja csak kezelni. Különböző interface-k kerültek implenetálásra hogy milyen adatok érkeznek a frotend felől és miket tartalamazhat a **Body vagy a HEAD** paraméter.
 ```
-nterface IBodyLogin {
+interface IBodyLogin {
     email: String,
     password: String
 }
@@ -239,3 +239,158 @@ A következő kép fogja bemutatni ezt a prehandler-t és a handler-t több ilye
 
 
 A végén bemutatásra kerül még egy file ez a login.controller.ts ebbena file-ban kerül feldolgozásra a felhasználó adatai szóval itt a **Regisztráció, Fiók törlés, Frissítés, Bejelentkezések** feldolgozása.
+```import { FastifyReply, FastifyRequest } from 'fastify';
+import { IBodyLogin, IbodyLoginString } from '../../interfaces/request.interfaces';
+
+const login = require('../../model/user.scehma');
+const jwt = require('jsonwebtoken');
+const md5 = require('md5');
+
+
+const loginCtrl = async(req: FastifyRequest<{Body: IBodyLogin}>, rep: FastifyReply) =>{
+    const {email, password} = req.body;
+
+    const result = await login.findOne({email: email});
+
+    if(!result) return rep.code(404).send('Nincs ilyen Email cím!');
+    if(result.password !== md5(password)) return rep.code(400).send('Hibás jelszó');
+
+    const payload = {
+      Email: result.email,
+      Password: result.password,
+      _id: result._id
+    };
+    
+    const token = jwt.sign(
+      payload,
+      process.env.MY_SECRECT_TOKEN,
+      {expiresIn: 60 * 60 * 1 } //1 óra
+    )
+
+    rep.setCookie('user-access', token,{
+      path:'http://localhost:5000/',
+      sameSite: 'strict',
+      maxAge: 3600, 
+      httpOnly: true,
+      secure: false,
+    })
+
+    rep.code(200).header('Access-Control-Expose-Headers', 'set-cookie').send({ID: result._id, Username: result.Uname, Email: result.email});
+};
+
+const deleteAcc = async (req: FastifyRequest, rep: FastifyReply) => {
+
+  const cookie = req.headers['cookie'];
+
+  const token = cookie?.split('=')[1];
+
+  const decoded = jwt.verify(token, process.env.MY_SECRECT_TOKEN);
+
+  const result = await login.deleteOne({email: decoded.Email});
+
+  if(result.deletedCount === 0) return rep.code(400).send({msg: 'Hiba történt...'});
+
+  rep.code(200).send({msg: 'Sikeres fiók törlés!'});
+  
+};
+
+const updateAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {
+  const { newEmail, oldEmail, oldPassword, newPassword } = req.body;
+
+  const result = await login.findOne({email: oldEmail});
+
+  if(!result) return rep.code(400).send({msg: 'Hiba történt...'});
+
+  if(newEmail !== '') {
+    const update = await login.updateOne({email: oldEmail}, {email: newEmail}, {upsert: false})
+    if(!update) return rep.code(400).send({msg: 'Hiba történt...'})
+  }
+
+  if(oldPassword !== '') {
+    if(md5(oldPassword) !== result.password) return rep.code(400).send({msg: 'Hibás jelszó!'})
+
+    if(newPassword !== '') {
+      const update = await login.updateOne({email: oldEmail}, {password: md5(newPassword)}, {upsert: false})
+      if(!update) return rep.code(400).send({msg: 'Hiba történt...'})
+    }
+  }
+
+  const payload = {
+    Email: newEmail !== '' ? newEmail : result.email,
+    Password: newPassword !== '' ? newPassword: result.password,
+    _id: result._id
+  };
+  
+  const token = jwt.sign(
+    payload,
+    process.env.MY_SECRECT_TOKEN,
+    {expiresIn: 60 * 60 * 1 } //1 óra
+  )
+
+  rep.setCookie('user-access', token,{
+    path:'/',
+    sameSite: 'strict',
+    maxAge: 3600, 
+    httpOnly: true,
+    secure: false,
+  })
+
+  newEmail ? rep.code(200).header('Access-Control-Expose-Headers', 'set-cookie').send({msg: 'Sikeres változtatás', email: newEmail}) : rep.code(200).header('Access-Control-Expose-Headers', 'set-cookie').send({msg: 'Sikeres változtatás'});
+};
+
+const getAccData = async (req: FastifyRequest, rep: FastifyReply) => {
+
+  const token = req.headers['cookie'];
+
+  const decoded = jwt.verify(token, process.env.MY_SECRET_KEY);
+
+  const result = await login.findOne({email: decoded.Email});
+
+  rep.code(200).send({"id": result._id});
+}
+
+module.exports = {
+  loginCtrl,
+  deleteAcc,
+  updateAcc,
+  getAccData
+}
+```
+
+A fent leírt kód az első függvény a felhasználót azonosítja a bejelentkezésnél ha sikeres volt akkor a backend szerver csinál egy sütit amit majd a felhasználónak küld vissza majd.
+```
+ const payload = {
+      Email: result.email,
+      Password: result.password,
+      _id: result._id
+    };
+    
+    const token = jwt.sign(
+      payload,
+      process.env.MY_SECRECT_TOKEN,
+      {expiresIn: 60 * 60 * 1 } //1 óra
+    )
+
+    rep.setCookie('user-access', token,{
+      path:'http://localhost:5000/',
+      sameSite: 'strict',
+      maxAge: 3600, 
+      httpOnly: true,
+      secure: false,
+    })
+```
+
+Elöször beállítok egy payload-ot ami tartalmazza a felhasználó adatait amikor hitelesítésnél vissa fejtve ezt a payload-ot kapjuk majd vissza.
+A token változó értéke fogja tartalmazza a sütinek a value értékét amit a frontend oldalon is láthatunk. A süti neve látható majd **user-access** névre fog majd hallgatni, illetve a value értéke a token lesz ahogy már említettem illetve különböző paramétereket de ezek már nem kötelezőek.
+
+A korábban említett interface-k itt látható is hogy hogyan kerülnek felhasználásra:
+```
+const updateAcc = async (req: FastifyRequest<{Body: IbodyLoginString}>, rep: FastifyReply) => {...}
+```
+
+Itt látható hogy **Body**-ban lévő értékek ilyenek lehetnek benne amit a **IbodyLoginString** tartalmaz és azok az értékek olvashatóak ki például így:
+```
+const {email, password} = req.body;
+```
+
+Itt a req.body-ból a email és a password mező értékeit olvasom ki ami értkeezett a frontend felől.
