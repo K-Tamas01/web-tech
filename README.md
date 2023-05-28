@@ -118,4 +118,124 @@ Ahogy a kódban látható ha a otherProps.value.length 0 akkor a label szövegé
 
 Ezek a kódok voltak amelyek érdekesek voltak számunkra mert a többi oldalt felhasználásra kerülnek a gombok lennének még érdekesek a számunkra de hasonlít a megoládsa a fentebb említett input mezőkre.
 
+**A különböző jeleket/karaktereket az alábbi oldalról került felhasználásra: https://mui.com/material-ui/material-icons/**
+
 ### Backend Kód leírás
+A backend szerverünk egy **Typescript Fastify** szerver, és az adatbázisunk egy Mongodb adatbázis ami a felhőbe és bárhonnan elérhető. A frontend oldalról különböző API hívásokkal érjük el a backend szerver külnböző kontroller függvényeit ami valamilyen műveltet végez ez a kérés alapján beérekezett paramétereken keresztül. 4 féle metódust fogad a **GET, POST, UPDATE, DELETE**  ezt a 4 tudja csak kezelni. Különböző interface-k kerültek implenetálásra hogy milyen adatok érkeznek a frotend felől és miket tartalamazhat a **Body vagy a HEAD** paraméter.
+```
+nterface IBodyLogin {
+    email: String,
+    password: String
+}
+interface IBodySignUp {
+    email: String,
+    password: String,
+    Uname: String,
+}
+interface IbodyLoginString{
+    oldEmail: String,
+    newEmail?: String,
+    oldPassword?: String,
+    newPassword?: String,
+}
+
+interface IbodyFilmString{
+    title: String,
+    length: Number,
+    description?: String,
+    age_restriced: Boolean,
+    age_limit?: Number,
+    date: Date,
+    time: Date,
+    room: Number,
+    seats: Number,
+    address: String,
+    address2?: String,
+    price: Number
+}
+
+interface IbodyFilmId{
+    _id: String,
+    title?: String,
+    length?: Number,
+    description?: String,
+    age_restriced?: Boolean,
+    age_limit?: Number,
+    date?: Date,
+    time?: Date,
+    room?: Number,
+    seats?: Number,
+    address?: String,
+    address2?: String,
+    price?: Number
+}
+
+export {
+    IBodyLogin,
+    IBodySignUp,
+    IbodyLoginString,
+    IbodyFilmString,
+    IbodyFilmId
+}
+```
+Ezeket az interfaceket hoztuk létre valamelyik függvény fogja ezeket felhasználni. Például vannak ezeke a változó?: típus-nál a kérdő jel **opciónális** szóval nem biztos hogy fog szerepelni az adott Body-ban vagy Head-ben.
+
+Itt az Auth.Controller.ts file-t fogjuk elemezni hogyan is épül ez fel.
+```
+import { FastifyReply, FastifyRequest } from 'fastify';
+
+const jwt = require("jsonwebtoken");
+const member = require("../../model/user.scehma");
+
+const authenticationwithjwttoken = async(req: FastifyRequest, rep: FastifyReply) =>{
+  
+  const cookie = req.headers['cookie'];
+
+  const token = cookie?.split('=')[1];
+
+  try{
+    if(!token){
+      return rep.code(400).send({msg: "Hiányzik a token!"});
+    }
+
+    const decoded = jwt.verify(token, process.env.MY_SECRECT_TOKEN);
+
+    const result = await member.findOne({email: decoded.Email});
+
+    if(!result) return rep.code(400).send({msg: "Sikertelen azonosítás"});
+
+  }catch(error){
+    return rep.code(401).send({msg: error});
+  }
+}
+
+module.exports = {
+  authenticationwithjwttoken
+}
+```
+
+Itt a fejlécben érkezik egy süti ami azonosítja a bejelentkezett felhasználót, itt a **jsonwebtoken**-t használtuk fel a titkosításra. Ha sikeres volt az authentikáció akkor a tovább halad majd a backend és a következő függvényt fogja végre hajtani mert nem tér vissza semmilyen hiba üzenettel. Itt látszik egy példán hogy melyik kontroller fogja majd feldolgozni a beérkezett kérést. Itt egy példa file tartalma:
+```
+import { FastifyInstance } from "fastify";
+
+const login = require('../controller/login/login.controller');
+const signup = require('../controller/sign-up/sign-up.controller');
+const auth = require('../controller/Auth/Auth.controller');
+
+export default async(fastify: FastifyInstance):Promise<void> =>{
+  fastify.post('/login',{handler: login.loginCtrl})
+  fastify.post('/sign-up',{handler: signup.signupnCtrl})
+  fastify.put('/update-data',{preHandler: auth.authenticationwithjwttoken, handler: login.updateAcc})
+  fastify.delete('/delete-account',{preHandler: auth.authenticationwithjwttoken, handler: login.deleteAcc})
+  fastify.post('/options',{preHandler: auth.authenticationwithjwttoken, handler: login.getAccData})
+  }
+```
+
+A következő kép fogja bemutatni ezt a prehandler-t és a handler-t több ilyen ehez hasonló hookok vannak még ezeken kívül.
+<div style="text-align: center;">
+     <img src="./Assign_Assets/lifeCycle.png" alt="lifeCycle">
+     (10. ábra) Fastify-lifeCycle
+</div>
+
+
+A végén bemutatásra kerül még egy file ez a login.controller.ts ebbena file-ban kerül feldolgozásra a felhasználó adatai szóval itt a **Regisztráció, Fiók törlés, Frissítés, Bejelentkezések** feldolgozása.
