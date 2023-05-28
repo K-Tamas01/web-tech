@@ -69,3 +69,53 @@ A végére maradt az az oldal ahol megnézhetjük mely városokban mennyi mozi t
 </div>
 
 ## Kód kapcsolatos dokumentáció
+### Frontend Kód leírás
+Az oldalok modulárisan épülnek különböző komponensek által, és ha valami változik az oldalon elég csak azt az egy komponenst renderelni és nem kell az egész oldalt ha csak 1 érték változik meg például az oldalon. Context-ekben tárolom az értékeket az felhasználórol illetve különböző alerteknek ad helyet. Az alert box-om nem más mint egy snackbar ami Bejlenetkzeés vagy valami adat frissítés során vagy törléskor fog megjelenni ha sikeres volt hanem és egy üzenet fog meg jelenni benne.
+<div style="text-align: center;">
+     <img src="./Assign_Assets/Alert.png" alt="Alerts">
+     (9. ábra) Alerts
+</div>
+
+ilyen allertek jelennek meg a sncakbar-ban ami 5 sec után eltűnik a képernyőröl.
+``` 
+<Snackbar 
+            open={isOpen} 
+            autoHideDuration={5000} 
+            onClose={handleClose} 
+            anchorOrigin={{
+                vertical:'top',
+                horizontal:'center'
+            }}>
+            <Alert severity={severity}>{msg}</Alert>
+        </Snackbar>
+```
+Ebben az implementációban látható hogyan is hoztam létre a fentebb említet snackbar-okat.
+Ez az alert külön komponensként van tárolva és csak property-ken keresztül kerül beállításra az egyes mezők.
+
+Ahogy minden input field is kivan szedve külön komponensként mert többször kerül felhasználásra, illetve ha meg változik valami érték benne elég azt az egy komponenst változtatni és nem kell újra renderelni az egész oldalt ahogy már említettük.
+```
+const Input = ({label, ...otherProps}) =>{
+    return(
+    <div className='Input-container'>
+       <input 
+            className='Input-box'
+            {...otherProps}
+        />
+        {label && (
+        <label
+          className={`${
+            otherProps.value.length ? 'shrink' : ''
+          } Input-box-label`}
+        >
+          {label}
+        </label>
+      )}
+    </div>
+)};
+```
+Ahogy a kódban látható ha a otherProps.value.length 0 akkor a label szövegével nem csinálunk semmit marad a helyén, de ha a **Length** értéke nagyobb mint **nulla** **(otherProps.value.length > 0)** akkor a label szövegünk kap egy **shrink** classname értéket amit a styles.scss fileba meghatároztunk a fentebb említett kódba nem látszik mert annyira nem fontos most a számunkra.
+
+
+Ezek a kódok voltak amelyek érdekesek voltak számunkra mert a többi oldalt felhasználásra kerülnek a gombok lennének még érdekesek a számunkra de hasonlít a megoládsa a fentebb említett input mezőkre.
+
+### Backend Kód leírás
